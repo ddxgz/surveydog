@@ -1,0 +1,60 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'surveydog/style.css' %}" />
+
+<h1>Admin Survey </h1>
+
+<h2>{{ question.question_text }}</h2>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'surveydog:admin_vote' survey_id %}" method="POST">
+    {% csrf_token %}
+    {% if survey.singlechoicequestion_set %}
+    {% for question in survey.singlechoicequestion_set.all %}
+    <label for="question{{ forloop.counter }}">
+        {{question.question_text }}
+    </label><br />
+
+        {% for choice in question.singlechoice_set.all %}
+            <input type="radio" name="squestion{{question.id}}choice"
+                   id="squestion{{question.id}}choice{{forloop.counter}}" value="{{choice.id}}" />
+            <label for="choice{{ forloop.counter }}">
+                {{choice.choice_text }}
+            </label><br />
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+
+    {% if survey.multichoicequestion_set %}
+    {% for question in survey.multichoicequestion_set.all %}
+    <label for="question{{ forloop.counter }}">
+        {{question.question_text }}
+    </label><br />
+
+        {% for choice in question.multichoice_set.all %}
+            <input type="checkbox" name="mquestion{{question.id}}choice"
+                   id="mquestion{{question.id}}choice{{forloop.counter}}" value="{{choice.id}}" />
+            <label for="choice{{ forloop.counter }}">
+                {{choice.choice_text }}
+            </label><br />
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+
+    {% if survey.freequestion_set %}
+    {% for question in survey.freequestion_set.all %}
+        <label for="question{{ forloop.counter }}">
+            {{question.question_text }}
+        </label>
+        <br />
+        <textarea name="fquestion{{question.id}}" id="question{{forloop.counter}}" value="{{question.id}}">
+        </textarea>
+
+        <br />
+    {% endfor %}
+    {% endif %}
+
+
+    <input type="submit" value="Vote" />
+</form>
+

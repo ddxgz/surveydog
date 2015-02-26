@@ -1,0 +1,79 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'surveydog/style.css' %}" />
+
+<h1>Latest Survey List</h1>
+{% if latest_survey_list %}
+    <ul>
+         {% for survey in latest_survey_list %}
+             <h2>{{ survey.survey_head }}</h2>
+             {{ survey.survey_text }}
+             <br/>
+             <i>{{ survey.pub_date }}</i>
+            <br/>
+
+        <h3>SingleChoice Questions</h3>
+
+            {% if survey.singlechoicequestion_set %}
+            <ol>
+            {% for question in survey.singlechoicequestion_set.all %}
+                
+                    <li>{{question.question_text }}</li>
+                      {% if question.singlechoice_set %}
+                    <ol>
+                    {% for choice in question.singlechoice_set.all %}
+
+                    <li>{{choice.choice_text }} votes: {{choice.votes }}</li>
+
+                        <br />
+                    {% endfor %}
+                    </ol>
+                     {% endif %}
+                <br />          
+            {% endfor %}
+            </ol>
+            {% endif %}
+
+        <h3>MultiChoice Questions</h3>
+            {% if survey.multichoicequestion_set %}
+            <ol>
+            {% for question in survey.multichoicequestion_set.all %}
+
+                    <li>{{question.question_text }}</li>
+                     {% if question.multichoice_set %}
+                    <ol>
+                    {% for choice in question.multichoice_set.all %}
+
+                    <li>{{choice.choice_text }} votes: {{choice.votes }}</li>
+
+                        <br />
+                    {% endfor %}
+                    </ol>
+                     {% endif %}
+                <br />
+            {% endfor %}
+            </ol>
+            {% endif %}
+
+        <h3>Free Questions</h3>
+
+            {% if survey.freequestion_set %}
+            <ol>
+            {% for question in survey.freequestion_set.all %}
+
+                    <li>{{question.question_text }}</li>
+                      {% if question.answer_text %}
+                    <ul>
+                    <li>{{question.answer_text }} </li>
+
+                        <br />
+                    </ul>
+                     {% endif %}
+                <br />
+            {% endfor %}
+            </ol>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No surveys are available.</p>
+{% endif %}
